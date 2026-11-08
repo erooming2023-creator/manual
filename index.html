@@ -1,0 +1,804 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta property="og:type" content="website">
+<meta property="og:title" content="무인매장 점주 매뉴얼">
+<meta property="og:description" content="무인매장 점주를 위한 상황별 대처법과 제로아이즈 키오스크 사용법">
+<meta property="og:url" content="https://erooming2023-creator.github.io/manual/">
+<meta name="robots" content="noindex">
+<title>무인매장 점주 매뉴얼</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="무인매장 점주를 위한 상황별 대처법과 제로아이즈 키오스크 사용법">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* 레이아웃: 휴대폰 한 손 사용 기준 단일 칼럼(최대 720px). 상단 고정 검색 → 상황 목록(행) → 상세(핵심 답 · 단계 · 주의 · 연락처) */
+:root{
+  --bg:#F1F4F0;
+  --surface:#FFFFFF;
+  --sunk:#E5EAE4;
+  --line:#D3DAD2;
+  --ink:#15201A;
+  --muted:#56645D;
+  --accent:#1B6B50;
+  --accent-ink:#FFFFFF;
+  --accent-soft:#DAECE2;
+  --warn:#8A5300;
+  --warn-soft:#FAEFD9;
+  --kiosk:#1C2621;
+  --kiosk-btn:#2B3832;
+  --kiosk-ink:#E6EEE9;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1412; --surface:#171F1B; --sunk:#1E2823; --line:#2B3731;
+    --ink:#E3EBE6; --muted:#98A79F; --accent:#5BC59D; --accent-ink:#0B1712; --accent-soft:#1B372C;
+    --warn:#E9B65A; --warn-soft:#352A15; --kiosk:#0A0F0D; --kiosk-btn:#1E2924; --kiosk-ink:#E6EEE9;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1412; --surface:#171F1B; --sunk:#1E2823; --line:#2B3731;
+  --ink:#E3EBE6; --muted:#98A79F; --accent:#5BC59D; --accent-ink:#0B1712; --accent-soft:#1B372C;
+  --warn:#E9B65A; --warn-soft:#352A15; --kiosk:#0A0F0D; --kiosk-btn:#1E2924; --kiosk-ink:#E6EEE9;
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.65;word-break:keep-all;overflow-wrap:anywhere;-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.wrap{max-width:720px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* 상단 */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.top .wrap{padding-block:12px;display:grid;gap:10px}
+.brand{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px;color:var(--ink);text-decoration:none;font-weight:700;font-size:18px;letter-spacing:-.01em}
+.brand small{font-size:12px;font-weight:500;color:var(--muted);letter-spacing:0}
+.search{position:relative}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted);pointer-events:none}
+.search input{width:100%;height:48px;padding:0 14px 0 42px;font:inherit;font-size:16px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:var(--r);-webkit-appearance:none;appearance:none}
+.search input::placeholder{color:var(--muted)}
+.search input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+
+/* 목록 */
+main.wrap{padding-block:20px 8px}
+.intro{color:var(--muted);margin:0 0 16px;max-width:60ch}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-block:2px 6px;margin-bottom:4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;height:36px;padding:0 14px;font:inherit;font-size:14px;font-weight:500;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+h2.sec{font-size:20px;line-height:1.35;margin:28px 0 2px;text-wrap:balance}
+.sec-note{color:var(--muted);font-size:14px;margin:0 0 6px}
+.group-label{display:flex;align-items:baseline;gap:6px;font-size:13px;font-weight:600;color:var(--muted);margin:18px 0 4px}
+.group-label span{font-family:var(--f-mono);font-size:12px}
+.rows{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;padding:14px 2px;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none}
+.row:hover .row-title{color:var(--accent)}
+.row-tag{display:block;font-size:12px;font-weight:600;color:var(--accent)}
+.row-title{display:block;font-weight:600;font-size:16px;line-height:1.45;text-wrap:balance}
+.row-peek{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--muted);font-size:14px;line-height:1.55;margin-top:2px}
+.chev{color:var(--muted);font-size:22px;line-height:1}
+.notice{background:var(--warn-soft);border-radius:var(--r);padding:12px 14px;margin:0 0 16px;font-size:14px}
+.empty{padding:12px 0;color:var(--muted)}
+.empty p{margin:0 0 6px}
+.help{margin-top:32px;padding:16px 18px 6px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.help h2{font-size:16px;margin:0 0 8px}
+
+/* 상세 */
+.back{display:inline-flex;align-items:center;gap:4px;font-size:14px;font-weight:500;text-decoration:none;color:var(--muted);padding:4px 0}
+.eyebrow{font-size:13px;font-weight:600;color:var(--accent);margin:10px 0 2px}
+.detail h1{font-size:26px;line-height:1.3;margin:0 0 16px;letter-spacing:-.015em;text-wrap:balance}
+.answer{background:var(--accent-soft);border-radius:var(--r);padding:16px 18px}
+.answer .lbl{display:block;font-size:12px;font-weight:600;color:var(--accent);margin-bottom:4px}
+.answer p{margin:0;font-size:17px;line-height:1.6}
+.share{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 14px;font:inherit;font-size:14px;font-weight:600;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn svg{width:16px;height:16px;flex:none}
+.msg{font-size:13px;color:var(--muted);min-width:0}
+.sel{user-select:all;-webkit-user-select:all;font-family:var(--f-mono);color:var(--ink);word-break:break-all}
+.blk{margin-top:28px}
+.blk h2{font-size:18px;line-height:1.4;margin:0 0 10px}
+.blk ul{margin:0;padding-left:1.2em;display:grid;gap:6px}
+
+.steps{list-style:none;margin:0;padding:0}
+.step{display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;position:relative;padding-bottom:22px}
+.step:last-child{padding-bottom:0}
+.step:not(:last-child)::before{content:"";position:absolute;left:15px;top:36px;bottom:6px;width:2px;background:var(--line)}
+.num{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-mono);font-weight:600;font-size:14px;background:var(--ink);color:var(--bg)}
+.step-body{min-width:0;padding-top:3px}
+.step-body p{margin:4px 0 0}
+.who{display:inline-block;font-size:12px;font-weight:600;line-height:1.6;padding:0 8px;border-radius:6px;background:var(--sunk);color:var(--muted)}
+.who.owner{background:var(--accent);color:var(--accent-ink)}
+.pending{display:inline-block;margin-top:8px;font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;background:var(--warn-soft);color:var(--warn)}
+.path{display:flex;flex-wrap:wrap;align-items:center;gap:6px 2px;margin:10px 0 0;padding:0;list-style:none}
+.path li{display:flex;align-items:center;gap:2px}
+.path li+li::before{content:"›";color:var(--muted);padding:0 3px}
+.path span{font-size:13px;line-height:1.3;padding:5px 9px;border-radius:6px;background:var(--surface);border:1px solid var(--line)}
+.path .key{border-color:var(--accent);color:var(--accent);font-weight:600}
+.flow{padding:14px 0;border-top:1px solid var(--line)}
+.flow:first-child{border-top:0;padding-top:0}
+.flow h3{font-size:16px;margin:0}
+.flow .note{color:var(--muted);font-size:14px;margin:6px 0 0}
+
+.kiosk{margin:14px 0 0;width:min(216px,100%)}
+.k-screen{background:var(--kiosk);border:1px solid var(--line);border-radius:14px;padding:10px 10px 12px}
+.k-bar{display:flex;justify-content:space-between;font-size:10px;color:var(--kiosk-ink);opacity:.65;margin:0 2px 8px}
+.k-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.k-btn{height:46px;display:grid;place-items:center;text-align:center;font-size:12px;font-weight:600;line-height:1.2;color:var(--kiosk-ink);background:var(--kiosk-btn);border-radius:8px;padding:0 4px}
+.k-btn.on{background:var(--accent);color:var(--accent-ink);box-shadow:0 0 0 2px var(--kiosk),0 0 0 4px var(--accent);animation:ring 1.8s ease-in-out infinite}
+@keyframes ring{50%{box-shadow:0 0 0 2px var(--kiosk),0 0 0 7px transparent}}
+@media (prefers-reduced-motion:reduce){.k-btn.on{animation:none}}
+.kiosk figcaption,.shot figcaption{font-size:12px;color:var(--muted);margin-top:6px}
+.shot{margin:12px 0 0}
+.shot img{display:block;max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px}
+
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.tbl table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.55}
+.tbl caption{text-align:left;font-weight:600;padding:12px 14px 8px}
+.tbl th,.tbl td{text-align:left;padding:10px 14px;border-top:1px solid var(--line);vertical-align:top}
+.tbl th{background:var(--sunk);font-weight:600;white-space:nowrap}
+.tbl td:first-child{font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+.cautions{background:var(--warn-soft);border-radius:var(--r);padding:16px 18px}
+.cautions h2{color:var(--warn)}
+
+.contacts{border-top:1px solid var(--line)}
+.ct{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.ct>*{grid-column:1}
+.ct-name{font-size:13px;color:var(--muted)}
+.ct-val{font-size:17px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink);text-decoration:none}
+.ct-note{font-size:13px;color:var(--muted)}
+.ct .open{grid-column:2;grid-row:1 / 4;font-size:14px;font-weight:600;text-decoration:none;white-space:nowrap}
+.help .contacts .ct:last-child{border-bottom:0}
+
+.meta{margin-top:32px;font-size:13px;color:var(--muted)}
+.foot{padding-block:24px 40px;margin-top:40px;font-size:13px;color:var(--muted);border-top:1px solid var(--line)}
+.foot p{margin:0 0 6px;max-width:62ch}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#" id="home-link">무인매장 점주 매뉴얼<small>제로아이즈 키오스크 기준</small></a>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+      <input id="q" type="search" placeholder="상황 검색: 환불, 퇴실, 사물함…" aria-label="상황 검색" autocomplete="off">
+    </div>
+  </div>
+</header>
+<main class="wrap" id="view"></main>
+<footer class="wrap foot">
+  <p>제로아이즈 공개 안내 자료(키오스크 이용안내, 오픈 준비 매뉴얼)를 바탕으로 매장 운영용으로 다시 정리한 자료입니다. 제로아이즈 공식 문서가 아니며, 최신 내용은 고객센터에서 확인하세요.</p>
+  <p id="foot-date"></p>
+</footer>
+
+<script>
+(function(){
+'use strict';
+
+/* ================================================================
+   ▼ 매뉴얼 내용 — 상황을 추가하거나 고칠 때는 이 블록만 수정합니다.
+   새 상황 추가: ITEMS 맨 아래 [새 상황 템플릿]을 복사해 붙여 넣고 내용만 바꾸세요.
+   id 는 링크 주소 끝(#id)이 되므로 영문 소문자·숫자·하이픈만 쓰고, 한 번 정하면 바꾸지 마세요.
+   ================================================================ */
+
+// GitHub Pages 등 실제 주소가 생기면 넣어 주세요. 예: 'https://아이디.github.io/manual/'
+const SITE_URL = 'https://erooming2023-creator.github.io/manual/';
+const UPDATED = '2026-11-08';
+
+const SOURCES = {
+  kiosk: { label: '제로아이즈 키오스크 이용안내 (기능별 시연 영상 포함)', url: 'https://zeroeyes.notion.site/bad12cf453bf4e708fdb478bc7b790ff' },
+  open:  { label: 'ZEROEYES 오픈 준비 매뉴얼', url: 'https://zeroeyes.notion.site/0280f52afe214edbbee47b06c11fc1e3' },
+  pass:  { label: '이용권별 가격 정보 전달 (이용권 종류와 특징)', url: 'https://zeroeyes.notion.site/08-9348d650820546409c612026421996e8' },
+  pg:    { label: '나이스페이먼츠(PG) 진행', url: 'https://zeroeyes.notion.site/04-PG-fb15ef1fc22a4ecea7d2727eb3b8bb3e' },
+  van:   { label: '나이스정보통신(VAN) 진행', url: 'https://zeroeyes.notion.site/05-VAN-90bbfb9ee9ea4fc780d89cee617fc919' },
+  cms:   { label: 'CMS 자동 이체 신청', url: 'https://zeroeyes.notion.site/13-CMS-4655320144b148878858437ca38a5abb' },
+  cs:    { label: '제로아이즈 고객센터', url: 'https://zeroeyes.notion.site/f3b5cb7db8bc48bbbb579591d72128e9' }
+};
+
+const CONTACTS = {
+  kakao: { name: '카카오톡 채널 상담 (기본 문의)', value: '(주)오래 카카오톡 채널', note: '월~토 09:30~18:30 · 채널 친구 추가 후 채팅', url: 'http://pf.kakao.com/_AAPAxb/chat', link: '채팅 열기' },
+  ars:   { name: '관리자 기능 문의 (보이는 ARS)', value: '1899-1784 → 2번', tel: '18991784', note: '화면이 안 뜨면 웹으로 여세요', url: 'https://www.zero-eyes.com/ars', link: '웹으로 열기' },
+  as:    { name: '키오스크 긴급 A/S', value: '1899-1784 → 3번', tel: '18991784', note: '전화 상담은 긴급 A/S만 받습니다' },
+  mail:  { name: '서류·자료 제출', value: 'ohrae@ohrae.biz', note: '이메일' },
+  pg:    { name: '나이스페이(PG) 계약 문의', value: '1661-7335 → 3번', tel: '16617335', note: '모바일 앱 결제 계약 관련' }
+};
+
+const CATEGORIES = [
+  { id: 'pay',    label: '결제·환불' },
+  { id: 'enter',  label: '입실·퇴실' },
+  { id: 'room',   label: '스터디룸' },
+  { id: 'locker', label: '사물함' },
+  { id: 'member', label: '회원·쿠폰' },
+  { id: 'device', label: '기기·문의' },
+  { id: 'money',  label: '정산·사용료' },
+  { id: 'kiosk',  label: '키오스크 사용법' },
+  { id: 'info',   label: '운영 기본 정보' }
+];
+
+// 키오스크 메인 화면 버튼 (예시 화면에 쓰임)
+const KIOSK_MENU = ['이용권 구매', '이용권 연장', '입실', '외출/퇴실', '좌석이동', '나의 이용권'];
+
+const ITEMS = [
+  /* ---------- 결제·환불 ---------- */
+  {
+    id: 'refund', type: 'case', cat: 'pay',
+    title: '고객이 결제 취소·환불을 요청해요',
+    answer: '고객이 키오스크 **[나의 이용권]에 로그인한 상태**를 그대로 둔 채 점주에게 요청해야 정상 처리됩니다.',
+    keywords: '환불 취소 결제취소 잘못 결제 돌려 반품 돈',
+    when: ['이용권을 잘못 사서 취소하고 싶다고 할 때', '결제 직후 환불을 요청할 때'],
+    steps: [
+      { who: '고객', text: '키오스크에서 **[나의 이용권]**을 누르고 휴대폰 번호로 로그인합니다.', path: ['나의 이용권', '휴대폰 번호 입력', '로그인'], screen: '나의 이용권' },
+      { who: '고객', text: '로그인된 화면을 **끄지 않고** 그대로 둔 채 점주에게 연락합니다.' },
+      { who: '점주', text: '고객이 로그인해 있는 동안 결제 취소·환불을 처리합니다.', pending: '관리자 화면 안내 추가 예정' }
+    ],
+    cautions: ['고객이 로그아웃했다면 다시 로그인하도록 안내하세요. 로그아웃 상태에서는 정상 처리가 되지 않습니다.', '모든 이용권은 구매하는 순간부터 시간·기간이 차감됩니다.'],
+    contacts: ['ars', 'kakao'], related: ['daypass-exit', 'kiosk-tips'], source: 'kiosk'
+  },
+
+  /* ---------- 입실·퇴실 ---------- */
+  {
+    id: 'daypass-exit', type: 'case', cat: 'enter',
+    title: '퇴실했더니 남은 시간이 사라졌대요',
+    answer: '당일권과 스터디룸 이용권은 **퇴실하면 남은 시간과 관계없이 끝납니다.** 잠깐 나갈 때는 [외출]을 눌러야 합니다.',
+    keywords: '퇴실 남은시간 소멸 사라짐 없어짐 당일권 외출 시간 날아감',
+    when: ['당일권 고객이 퇴실 후 다시 들어오려는데 이용권이 없을 때', '스터디룸 이용 중 퇴실을 눌러 이용권이 끝났을 때'],
+    steps: [
+      { who: '고객', text: '잠깐 자리를 비울 때는 **[외출/퇴실] → [외출]**을 누르도록 안내합니다.', path: ['외출/퇴실', '휴대폰 번호 입력', '로그인', '이용권 선택', '외출'], screen: '외출/퇴실' },
+      { who: '고객', text: '[퇴실]을 누르면 이용권이 종료된다는 안내 팝업이 뜹니다. [확인]을 누르면 남은 시간이 사라집니다.' }
+    ],
+    cautions: ['이미 퇴실해 이용권이 끝났다면 처리 가능 여부는 고객센터에 문의하세요.', '시간권·기간권(정기권)은 퇴실해도 이용권이 남아 있습니다.'],
+    contacts: ['kakao'], related: ['enter-exit', 'kiosk-tips'], source: 'kiosk'
+  },
+  {
+    id: 'daily-seat', type: 'case', cat: 'enter',
+    title: '정기권인데 매일 좌석을 다시 고르래요',
+    answer: '모든 좌석이 공유석이라 **시간권·기간권도 매일 처음 입실할 때 좌석을 고릅니다.** 고정석만 예외입니다.',
+    keywords: '좌석 선택 매일 정기권 시간권 기간권 자리 고정 지정석',
+    when: ['정기권 고객이 어제 앉은 자리가 왜 잡혀 있지 않냐고 물을 때'],
+    steps: [
+      { who: '고객', text: '[입실]에서 로그인한 뒤 정기권을 고르고, 그날 앉을 좌석을 선택합니다.', path: ['입실', '휴대폰 번호 입력', '로그인', '정기권 선택', '입실', '좌석 선택', '입실'], screen: '입실' }
+    ],
+    cautions: ['당일권은 구매할 때 좌석을 이미 골랐기 때문에 입실할 때 좌석 선택이 없습니다.', '매장에서 고정석을 판매한다면, 늘 같은 자리를 원하는 고객에게 고정석 기간권을 안내할 수 있습니다.'],
+    related: ['pass-types', 'enter-exit'], source: 'kiosk'
+  },
+  {
+    id: 'seat-move', type: 'case', cat: 'enter',
+    title: '고객이 자리를 옮기고 싶대요',
+    answer: '**[좌석이동]**에서 고객이 직접 옮길 수 있습니다. 스터디룸은 매장 설정에 따라 옮길 수 있는 범위가 다르고, 사물함은 점주가 옮겨 줘야 합니다.',
+    keywords: '좌석이동 자리 이동 변경 옮기기 바꾸기 자리바꿈',
+    steps: [
+      { who: '고객', text: '[좌석이동] → 1인석에서 이용권을 고르고, 입실 버튼 위의 [좌석이동]을 누른 뒤 새 좌석을 선택합니다.', path: ['좌석이동', '휴대폰 번호 입력', '로그인', '1인석', '이용권 선택', '좌석이동', '새 좌석 선택', '좌석이동', '확인'], screen: '좌석이동' }
+    ],
+    related: ['move', 'locker-move'], source: 'kiosk'
+  },
+  {
+    id: 'auto-exit', type: 'case', cat: 'enter',
+    title: '기간권 고객이 자동으로 퇴실됐어요',
+    answer: '기간권은 **외출 허용 시간을 넘기면 자동으로 퇴실** 처리됩니다. 다시 입실하면 됩니다.',
+    keywords: '자동퇴실 강제퇴실 자동 퇴실 기간권 외출 초과 튕김',
+    when: ['기간권 고객이 외출했다가 오래 지나 돌아왔는데 퇴실 처리돼 있을 때'],
+    steps: [
+      { who: '고객', text: '[입실]에서 기간권을 고르고 좌석을 다시 선택해 입실합니다.', path: ['입실', '휴대폰 번호 입력', '로그인', '기간권 선택', '입실', '좌석 선택', '입실'], screen: '입실' },
+      { who: '점주', text: '외출 허용 시간은 매장 설정을 따릅니다. 고객에게 허용 시간을 미리 알려 주세요.', pending: '설정 확인 방법 추가 예정' }
+    ],
+    contacts: ['ars'], related: ['timepass-pause', 'pass-types'], source: 'pass'
+  },
+  {
+    id: 'timepass-pause', type: 'case', cat: 'enter',
+    title: '시간권이 외출 중에 차감됐대요',
+    answer: '시간권은 외출하면 시간이 멈추지만, **하루 외출 허용 시간을 넘기면 그때부터 자동으로 차감**됩니다. 외출 허용 시간은 매일 0시에 초기화됩니다.',
+    keywords: '시간권 차감 외출 줄어듦 시간 깎임 멈춤',
+    steps: [
+      { who: '고객', text: '잠깐 나갈 때는 [외출/퇴실] → [외출]을 누릅니다. 외출 중에는 시간이 멈춥니다.', path: ['외출/퇴실', '휴대폰 번호 입력', '로그인', '이용권 선택', '외출'], screen: '외출/퇴실' },
+      { who: '점주', text: '하루 외출 허용 시간을 고객에게 미리 알려 주세요.', pending: '설정 확인 방법 추가 예정' }
+    ],
+    cautions: ['시간권은 유효기간이 있어서, 시간이 남아 있어도 유효기간이 지나면 사라집니다.'],
+    related: ['auto-exit', 'pass-types'], source: 'pass'
+  },
+
+  /* ---------- 스터디룸 ---------- */
+  {
+    id: 'room-pass-enter', type: 'case', cat: 'room',
+    title: '스터디룸 정기권으로 입실이 안 돼요',
+    answer: '룸 정기권은 먼저 **[나의 이용권]에서 예약**해야 합니다. 예약하면 당일권이 자동으로 생기고, 그 당일권으로 입실합니다.',
+    keywords: '스터디룸 룸 정기권 입실 안됨 예약 시간권 기간권',
+    steps: [
+      { who: '고객', text: '[나의 이용권] → 룸에서 정기권을 고르고 [예약]을 누릅니다. 인원·시간·룸·날짜를 차례로 고르면 예약이 끝나고 당일권이 생깁니다.', path: ['나의 이용권', '로그인', '룸', '정기권 선택', '예약', '이용인원', '이용시간', '룸 선택', '예약 일시', '확인'], screen: '나의 이용권' },
+      { who: '고객', text: '예약 시간이 되면 [입실]에서 새로 생긴 룸 당일권을 골라 입실합니다.', path: ['입실', '로그인', '룸 당일권 선택', '입실', '룸 선택', '입실'], screen: '입실' }
+    ],
+    related: ['room-early', 'enter-exit'], source: 'kiosk'
+  },
+  {
+    id: 'room-early', type: 'case', cat: 'room',
+    title: '예약 시간 전이라 룸 입실이 안 된대요',
+    answer: '스터디룸은 **입실 가능 시간 전에는 입실할 수 없고**, 키오스크에 안내 화면이 뜹니다. 예약 시간에 맞춰 다시 입실하면 됩니다.',
+    keywords: '룸 일찍 입실 안됨 시간 전 스터디룸 예약 미리',
+    steps: [
+      { who: '고객', text: '예약한 시작 시간이 되면 [입실]에서 다시 시도합니다.', path: ['입실', '로그인', '룸 당일권 선택', '입실', '룸 선택', '입실'], screen: '입실' }
+    ],
+    cautions: ['룸을 다른 방으로 옮길 수 있는 범위는 매장 관리자 설정에 따라 다릅니다.'],
+    related: ['room-pass-enter', 'move'], source: 'kiosk'
+  },
+  {
+    id: 'room-extend', type: 'case', cat: 'room',
+    title: '스터디룸 시간을 늘리고 싶대요',
+    answer: '**[이용권 연장] → 룸**에서 연장합니다. 룸 정기권이 있으면 결제 방법 선택에서 정기권으로 연장할 수 있습니다.',
+    keywords: '룸 연장 시간 추가 스터디룸 늘리기',
+    steps: [
+      { who: '고객', text: '[이용권 연장] → 룸에서 사용 중인 룸 이용권을 고르고 [시간 연장]을 누른 뒤 시간을 선택합니다.', path: ['이용권 연장', '로그인', '룸', '룸 이용권 선택', '시간 연장', '시간 선택', '결제 방법 선택', '결제'], screen: '이용권 연장' },
+      { who: '고객', text: '결제 방법 선택에서 추가 결제를 하거나, 가지고 있는 룸 정기권을 고릅니다.' }
+    ],
+    related: ['extend'], source: 'kiosk'
+  },
+
+  /* ---------- 사물함 ---------- */
+  {
+    id: 'locker-buy', type: 'case', cat: 'locker',
+    title: '고객이 사물함을 살 수 없대요',
+    answer: '사물함은 **시간권·기간권을 가진 고객만** 살 수 있습니다. 당일권만 있으면 구매할 수 없습니다.',
+    keywords: '사물함 구매 안됨 못삼 락커 보관함',
+    steps: [
+      { who: '고객', text: '시간권·기간권이 있는지 확인한 뒤 [이용권 구매] → 1인석 → 사물함에서 구매합니다.', path: ['이용권 구매', '로그인', '1인석', '사물함', '기간권', '기간 선택', '사물함 선택', '결제'], screen: '이용권 구매' },
+      { who: '점주', text: '관리자 웹에서 사물함 구매 조건으로 정해 둔 이용권이 무엇인지 확인합니다.', pending: '설정 화면 안내 추가 예정' }
+    ],
+    cautions: ['처음 정상 구매한 뒤에는 정기권이 없어도 사물함 연장 구매는 할 수 있습니다.'],
+    related: ['locker-move', 'pass-types'], source: 'kiosk'
+  },
+  {
+    id: 'locker-move', type: 'case', cat: 'locker',
+    title: '고객이 사물함을 옮기고 싶대요',
+    answer: '사물함 이동은 **고객이 직접 할 수 없습니다.** 키오스크에 관리자 문의 안내가 뜨면 점주가 옮겨 줘야 합니다.',
+    keywords: '사물함 이동 변경 바꾸기 옮기기 락커',
+    steps: [
+      { who: '고객', text: '[좌석이동] → 사물함에서 이동을 시도하면 관리자에게 문의하라는 팝업이 뜹니다.', path: ['좌석이동', '로그인', '사물함', '이용권 선택', '사물함 이동', '새 사물함 선택', '관리자 문의 안내'], screen: '좌석이동' },
+      { who: '점주', text: '고객이 원하는 사물함 번호를 확인한 뒤 관리자 웹에서 사물함을 바꿔 줍니다.', pending: '관리자 화면 안내 추가 예정' }
+    ],
+    contacts: ['ars'], related: ['locker-buy', 'move'], source: 'kiosk'
+  },
+
+  /* ---------- 회원·쿠폰 ---------- */
+  {
+    id: 'signup', type: 'case', cat: 'member',
+    title: '처음 온 고객이 회원가입을 못 해요',
+    answer: '처음 온 고객은 **어떤 버튼을 눌러도 회원가입으로 이어집니다.** 휴대폰 인증 후 성별과 생년월일만 넣으면 됩니다.',
+    keywords: '회원가입 가입 처음 신규 인증번호 등록 회원등록',
+    steps: [
+      { who: '고객', text: '아무 메뉴(예: 이용권 구매)나 누르고 휴대폰 번호를 입력해 로그인합니다.', path: ['이용권 구매', '휴대폰 번호 입력', '로그인'], screen: '이용권 구매' },
+      { who: '고객', text: '회원 정보가 없다는 안내와 함께 회원가입 여부를 물으면 [확인]을 누릅니다. 인증번호가 문자로 자동 발송됩니다.' },
+      { who: '고객', text: '인증번호를 넣고 성별, 생년월일 8자리를 입력한 뒤 약관을 확인하고 [회원가입]을 누릅니다.', path: ['인증번호 입력', '다음', '성별', '생년월일 8자리', '약관 확인', '회원가입'] }
+    ],
+    cautions: ['생년월일은 8자리(예: 19990101)로 입력합니다.'],
+    related: ['kiosk-menu'], source: 'kiosk'
+  },
+  {
+    id: 'coupon-alert', type: 'case', cat: 'member',
+    title: '쿠폰 알림을 못 받았대요',
+    answer: '마케팅 정보 수신에 동의하지 않으면 **쿠폰은 발급되지만 알림톡·문자가 오지 않습니다.**',
+    keywords: '쿠폰 알림 문자 알림톡 안옴 마케팅 수신동의',
+    steps: [
+      { who: '고객', text: '[나의 이용권]에 로그인해 [나의 쿠폰]에서 쿠폰이 들어와 있는지 확인합니다.', path: ['나의 이용권', '로그인', '나의 쿠폰'], screen: '나의 이용권' },
+      { who: '고객', text: '같은 화면에서 마케팅 수신 동의를 바꾸면 다음부터 알림을 받을 수 있습니다.' }
+    ],
+    related: ['free-coupon'], source: 'kiosk'
+  },
+  {
+    id: 'free-coupon', type: 'case', cat: 'member',
+    title: '무료 이용권 쿠폰은 어떻게 쓰나요?',
+    answer: '무료 쿠폰은 **대상 이용권을 결제할 때 쿠폰을 골라 결제를 마쳐야** 쓸 수 있습니다. 예: 당일권을 사면서 사물함 무료 쿠폰 사용',
+    keywords: '무료 쿠폰 사용 사물함 무료 혜택 이벤트',
+    steps: [
+      { who: '고객', text: '대상 이용권(예: 1인석 당일권)을 사면서 혜택(쿠폰) 선택 단계에서 무료 이용권 쿠폰을 고르고 결제를 마칩니다.', path: ['이용권 구매', '로그인', '1인석', '자유석', '당일권', '좌석 선택', '결제', '혜택(쿠폰) 선택', '무료 쿠폰 선택', '결제 완료'], screen: '이용권 구매' },
+      { who: '고객', text: '[나의 이용권] → 사물함에서 무료 쿠폰을 고르고 [사용하기]를 누른 뒤 사물함을 선택해 입실합니다.', path: ['나의 이용권', '로그인', '사물함', '무료 쿠폰 선택', '사용하기', '사물함 선택', '입실', '유의사항 확인'], screen: '나의 이용권' }
+    ],
+    related: ['coupon-alert'], source: 'kiosk'
+  },
+
+  /* ---------- 기기·문의 ---------- */
+  {
+    id: 'kiosk-broken', type: 'case', cat: 'device',
+    title: '키오스크가 고장 났어요',
+    answer: '**1899-1784 → 3번(키오스크 긴급 A/S)**으로 전화하세요. 전화 상담은 긴급 A/S만 받습니다.',
+    keywords: '고장 오류 먹통 꺼짐 에러 화면 안나옴 AS 수리 카드리더기 결제기 멈춤',
+    steps: [
+      { who: '점주', text: '어떤 화면에서 어떤 증상이 생기는지 사진이나 영상으로 남겨 둡니다.' },
+      { who: '점주', text: '1899-1784로 전화해 **3번**을 누르고 증상을 설명합니다.' }
+    ],
+    cautions: ['고객센터 운영 시간은 월~토 09:30~18:30입니다.'],
+    contacts: ['as', 'kakao'], related: ['admin-question'], source: 'cs'
+  },
+  {
+    id: 'admin-question', type: 'case', cat: 'device',
+    title: '관리자 기능 사용법이 궁금해요',
+    answer: '**1899-1784 → 2번 보이는 ARS** 또는 **카카오톡 채널**로 문의하세요.',
+    keywords: '관리자 웹 기능 문의 사용법 설정 질문 ARS 모르겠어요',
+    steps: [
+      { who: '점주', text: '1899-1784로 전화해 2번을 누르면 휴대폰에 보이는 ARS 화면이 뜹니다. 화면이 안 뜨면 웹 주소로 엽니다.' },
+      { who: '점주', text: '글로 문의하려면 (주)오래 카카오톡 채널을 친구로 추가한 뒤 채팅으로 남깁니다.' }
+    ],
+    contacts: ['ars', 'kakao'], related: ['contacts'], source: 'cs'
+  },
+
+  /* ---------- 정산·사용료 ---------- */
+  {
+    id: 'settlement', type: 'case', cat: 'money',
+    title: '카드 매출은 언제 들어오나요?',
+    answer: '키오스크 카드결제(VAN)는 **2~3일 뒤**, 모바일 앱 결제(PG)는 **한 달에 4번** 정산됩니다.',
+    keywords: '정산 매출 입금 카드 언제 수수료 VAN PG 나이스 돈',
+    points: [
+      '키오스크 카드결제(나이스정보통신, VAN): 카드사 처리 기간 2~3일 뒤 수수료를 뺀 금액이 정산 계좌로 들어옵니다.',
+      '모바일 앱 결제(나이스페이먼츠, PG): 금융권 영업일 기준으로 한 달에 4번 정산됩니다.',
+      '결제 수수료(안내 자료 기준): VAN 일반 2.3% → 영세사업자 0.5%, PG 일반 3.5% → 영세사업자 1.9%'
+    ],
+    table: { caption: '모바일 앱 결제(PG) 정산 일정', head: ['결제 승인일', '정산일'], rows: [['1일~7일', '그달 15일'], ['8일~14일', '그달 22일'], ['15일~21일', '그달 29일'], ['22일~말일', '다음 달 8일']] },
+    cautions: ['PG 계약 관련 안내는 전화 없이 대표 이메일로만 옵니다. 메일함을 자주 확인하세요.'],
+    contacts: ['pg'], related: ['system-fee'], source: 'pg'
+  },
+  {
+    id: 'system-fee', type: 'case', cat: 'money',
+    title: '시스템 사용료는 언제 어떻게 나가나요?',
+    answer: '**매월 15일 CMS 자동이체**로만 냅니다. 잔고 부족으로 실패하면 다음 날 다시 출금됩니다.',
+    keywords: '사용료 CMS 자동이체 출금 리스 요금 납부 월정액',
+    points: [
+      '계좌이체나 카드결제로는 낼 수 없고 CMS 자동이체만 됩니다.',
+      '알림톡·문자 사용량에 따라 매달 금액이 달라질 수 있습니다.',
+      '리스로 구매했다면 리스비도 매월 15일 CMS로 나갑니다.'
+    ],
+    cautions: ['사용료가 밀리면 이용 계약에 따라 서비스 이용정지 등 불이익을 받을 수 있습니다.'],
+    contacts: ['kakao'], related: ['settlement'], source: 'cms'
+  },
+
+  /* ---------- 키오스크 사용법 ---------- */
+  {
+    id: 'kiosk-menu', type: 'guide', cat: 'kiosk',
+    title: '키오스크 메뉴 한눈에 보기',
+    answer: '메인 화면에는 6개 메뉴가 있고, 어떤 메뉴든 **휴대폰 번호로 로그인**하면서 시작합니다.',
+    keywords: '메뉴 버튼 키오스크 화면 기본 처음',
+    figure: true,
+    table: { caption: '메뉴별 쓰임', head: ['메뉴', '이럴 때 누릅니다'], rows: [
+      ['이용권 구매', '1인석·스터디룸·사물함 이용권을 새로 살 때'],
+      ['이용권 연장', '가지고 있는 이용권의 시간이나 기간을 늘릴 때'],
+      ['입실', '자리나 룸에 들어가기 전에'],
+      ['외출/퇴실', '잠깐 나갈 때(외출), 이용을 끝낼 때(퇴실)'],
+      ['좌석이동', '자리·룸·사물함을 바꿀 때'],
+      ['나의 이용권', '이용권·쿠폰 확인, 룸 정기권 예약, 환불 요청할 때 로그인']
+    ] },
+    flows: [
+      { title: '모든 메뉴의 시작', path: ['메뉴 선택', '휴대폰 번호 입력', '로그인'] },
+      { title: '결제할 때 공통 순서', path: ['결제', '혜택(쿠폰) 선택', '다음', '결제 수단 선택', '다음', '결제 안내 팝업 따라 진행', '결제 완료'] }
+    ],
+    cautions: ['화면 구성은 매장의 키오스크 구성과 판매 이용권에 따라 다를 수 있습니다.'],
+    related: ['buy', 'kiosk-tips'], source: 'kiosk'
+  },
+  {
+    id: 'buy', type: 'guide', cat: 'kiosk',
+    title: '이용권 구매하기',
+    answer: '[이용권 구매]에서 1인석·룸·사물함을 고릅니다. **당일권만 결제 전에 좌석을 먼저 고릅니다.**',
+    keywords: '구매 이용권 사기 결제 당일권 시간권 기간권 정기권 룸 사물함',
+    flows: [
+      { title: '1인석 당일권', path: ['이용권 구매', '로그인', '1인석', '자유석', '당일권', '구매 시간', '좌석 선택', '결제'], note: '결제 전에 좌석 배치도에서 자리를 먼저 고릅니다.' },
+      { title: '1인석 시간권·기간권', path: ['이용권 구매', '로그인', '1인석', '자유석', '시간권/기간권', '시간·기간 선택', '결제'] },
+      { title: '스터디룸 당일권 (예약 또는 바로 사용)', path: ['이용권 구매', '로그인', '룸', '당일권 사전예약', '이용인원', '이용시간', '룸 선택', '예약일시/바로사용', '결제'] },
+      { title: '스터디룸 시간권·기간권', path: ['이용권 구매', '로그인', '룸', '시간권/기간권', '기준 인원', '시간·기간 선택', '결제'], note: '산 뒤에는 [나의 이용권]에서 예약해야 입실할 수 있습니다.' },
+      { title: '사물함', path: ['이용권 구매', '로그인', '1인석', '사물함', '기간권', '기간 선택', '사물함 선택', '결제'], note: '시간권·기간권이 있는 고객만 살 수 있습니다.' },
+      { title: '결제 다음 공통 순서', path: ['혜택(쿠폰) 선택', '다음', '결제 수단 선택', '다음', '결제 안내 팝업 따라 진행', '결제 완료'] }
+    ],
+    related: ['pass-types', 'locker-buy', 'room-pass-enter'], source: 'kiosk'
+  },
+  {
+    id: 'extend', type: 'guide', cat: 'kiosk',
+    title: '이용권 연장하기',
+    answer: '[이용권 연장]에서 연장할 이용권을 고르고 **[시간 연장]**을 누릅니다.',
+    keywords: '연장 늘리기 추가 시간 기간',
+    flows: [
+      { title: '1인석', path: ['이용권 연장', '로그인', '1인석', '이용권 선택', '시간 연장', '시간 선택', '결제'] },
+      { title: '스터디룸 당일권', path: ['이용권 연장', '로그인', '룸', '룸 당일권', '시간 연장', '시간 선택', '결제 방법 선택', '결제'], note: '룸 정기권이 있으면 결제 방법 선택에서 정기권으로 연장할 수 있습니다.' },
+      { title: '스터디룸 정기권', path: ['이용권 연장', '로그인', '룸', '룸 정기권', '시간 연장', '시간·기간 선택', '결제'] },
+      { title: '사물함', path: ['이용권 연장', '로그인', '사물함', '사물함 이용권', '시간 연장', '기간 선택', '결제'] }
+    ],
+    related: ['room-extend'], source: 'kiosk'
+  },
+  {
+    id: 'enter-exit', type: 'guide', cat: 'kiosk',
+    title: '입실·외출·퇴실하기',
+    answer: '들어갈 때는 [입실], 잠깐 나갈 때는 [외출], 이용을 끝낼 때는 [퇴실]입니다. **당일권과 룸은 퇴실하면 남은 시간이 사라집니다.**',
+    keywords: '입실 외출 퇴실 들어가기 나가기',
+    flows: [
+      { title: '1인석 당일권 입실', path: ['입실', '로그인', '당일권 선택', '입실'], note: '구매할 때 좌석을 골랐으므로 좌석 선택이 없습니다.' },
+      { title: '1인석 시간권·기간권 입실', path: ['입실', '로그인', '정기권 선택', '입실', '좌석 선택', '입실'], note: '매일 처음 입실할 때 좌석을 고릅니다.' },
+      { title: '스터디룸 입실', path: ['입실', '로그인', '룸 당일권 선택', '입실', '룸 선택', '입실'], note: '룸 정기권은 예약해서 생긴 당일권으로 입실합니다.' },
+      { title: '외출 (1인석·룸)', path: ['외출/퇴실', '로그인', '이용권 선택', '외출'] },
+      { title: '당일권·룸 퇴실', path: ['외출/퇴실', '로그인', '이용권 선택', '퇴실', '종료 안내 확인'], note: '남은 시간과 관계없이 이용권이 끝납니다.' },
+      { title: '시간권·기간권 퇴실', path: ['외출/퇴실', '로그인', '정기권 선택', '퇴실'] }
+    ],
+    related: ['daypass-exit', 'daily-seat', 'room-pass-enter'], source: 'kiosk'
+  },
+  {
+    id: 'move', type: 'guide', cat: 'kiosk',
+    title: '좌석·룸·사물함 이동하기',
+    answer: '[좌석이동]에서 바꿉니다. **사물함은 고객이 직접 옮길 수 없어** 점주가 처리합니다.',
+    keywords: '이동 좌석이동 룸이동 사물함이동 자리 바꾸기',
+    flows: [
+      { title: '1인석 좌석', path: ['좌석이동', '로그인', '1인석', '이용권 선택', '좌석이동', '새 좌석 선택', '좌석이동', '확인'] },
+      { title: '스터디룸', path: ['좌석이동', '로그인', '룸', '이용권 선택', '좌석이동', '이동 가능한 룸 선택', '좌석이동', '확인', '입실'], note: '옮길 수 있는 룸의 범위는 매장 관리자 설정에 따라 다릅니다.' },
+      { title: '사물함', path: ['좌석이동', '로그인', '사물함', '이용권 선택', '사물함 이동', '새 사물함 선택', '관리자 문의 안내'], note: '고객이 직접 옮길 수 없고, 관리자에게 문의하라는 팝업이 뜹니다.' }
+    ],
+    related: ['seat-move', 'locker-move'], source: 'kiosk'
+  },
+  {
+    id: 'kiosk-tips', type: 'guide', cat: 'kiosk',
+    title: '고객에게 꼭 안내할 6가지',
+    answer: '고객 문의 대부분은 아래 6가지에서 나옵니다. 매장 안내문이나 공지에 넣어 두면 좋습니다.',
+    keywords: '안내 유의사항 공지 주의 카드 두고감 로그아웃 카드 분실',
+    pointsTitle: '안내할 내용',
+    points: [
+      '시간권·기간권도 매일 처음 입실할 때 좌석을 골라야 합니다. (고정석 제외)',
+      '모든 이용권은 구매하는 순간부터 시간·기간이 줄어듭니다. 시간권은 유효기간이 줄어듭니다.',
+      '당일권은 좌석을 먼저 고른 뒤 결제하고, 퇴실하면 남은 시간이 사라집니다.',
+      '키오스크를 다 쓴 뒤에는 로그아웃됐는지 확인합니다.',
+      '결제 후에는 카드 리더기에서 카드를 꼭 챙깁니다.',
+      '결제 취소·환불은 [나의 이용권]에 로그인한 상태로 관리자에게 요청합니다.'
+    ],
+    related: ['refund', 'daypass-exit', 'daily-seat'], source: 'kiosk'
+  },
+
+  /* ---------- 운영 기본 정보 ---------- */
+  {
+    id: 'pass-types', type: 'info', cat: 'info',
+    title: '이용권 종류와 차이',
+    answer: '자유석(당일권·시간권·기간권·할인권), 고정석, 스터디룸·탁구대, 사물함 이용권이 있습니다. **차이를 알면 고객 문의 대부분이 풀립니다.**',
+    keywords: '이용권 종류 당일권 시간권 기간권 할인권 고정석 정기권 차이',
+    table: { caption: '이용권별 핵심 특징', head: ['이용권', '핵심 특징'], rows: [
+      ['자유석 당일권', '구매할 때 좌석을 먼저 고르는 유일한 이용권. 15분 단위. 퇴실하면 남은 시간이 사라짐'],
+      ['자유석 시간권', '입실하면 차감, 외출·퇴실하면 멈춤. 하루 외출 허용 시간을 넘기면 자동 차감(매일 0시 초기화). 유효기간 있음'],
+      ['자유석 기간권', '일 단위(예: 14일, 28일). 외출 허용 시간을 넘기면 자동 퇴실'],
+      ['할인권', '오전·오후·심야 등 정해진 시간대에만 쓰는 이용권'],
+      ['고정석 기간권', '퇴실 처리를 안 해도 되는 유일한 이용권. 독립형·칸막이형 가격을 따로 정함'],
+      ['스터디룸·탁구대', '사전 예약이 되는 유일한 이용권. 15분 단위 예약. 예약 없는 시간은 바로 사용 가능'],
+      ['사물함 기간권', '시간권·기간권 보유 고객만 구매. 첫 구매 후 연장은 정기권 없이도 가능']
+    ] },
+    points: ['모든 이용권은 구매하는 순간부터 시간·기간이 차감됩니다.', '오픈 전 정기권 사전예약으로 등록한 이용권만 첫 입실 전까지 차감되지 않습니다.'],
+    related: ['buy', 'kiosk-tips'], source: 'pass'
+  },
+  {
+    id: 'contacts', type: 'info', cat: 'info',
+    title: '고객센터 연락처',
+    answer: '기본 문의는 **카카오톡 채널**, 키오스크 고장은 **1899-1784 → 3번**입니다.',
+    keywords: '고객센터 연락처 전화 번호 카톡 문의 이메일',
+    contactsTitle: '연락처',
+    contacts: ['kakao', 'ars', 'as', 'mail', 'pg'],
+    points: ['운영 시간: 월~토 09:30~18:30', '카카오톡 채널은 (주)오래 채널을 친구로 추가해야 상담할 수 있습니다.'],
+    related: ['kiosk-broken', 'admin-question'], source: 'cs'
+  }
+
+  /* ---------- [새 상황 템플릿] 복사해서 위 목록 끝(마지막 } 뒤에 쉼표)에 붙여 넣으세요 ----------
+  ,{
+    id: 'new-case',            // 링크 이름: 영문 소문자·숫자·하이픈
+    type: 'case',              // case(상황) / guide(사용법) / info(기본 정보)
+    cat: 'pay',                // 분류: pay enter room locker member device money kiosk info
+    title: '고객이 ○○라고 해요',
+    answer: '핵심 답 한두 문장. **굵게** 쓸 부분은 별표 두 개로 감쌉니다.',
+    keywords: '검색에 걸릴 단어들 띄어쓰기로',
+    when: ['이럴 때 해당'],
+    steps: [
+      { who: '고객', text: '고객이 할 일', path: ['나의 이용권', '로그인'], screen: '나의 이용권' },
+      { who: '점주', text: '점주가 할 일', img: 'images/new-case-2.png', caption: '사진 설명' }
+    ],
+    cautions: ['주의할 점'],
+    contacts: ['kakao'],       // kakao ars as mail pg
+    related: ['refund'],       // 함께 볼 항목 id
+    source: 'kiosk',           // SOURCES 의 이름
+    updated: '2026-11-08'
+  }
+  ------------------------------------------------------------------------------------------------ */
+];
+/* ▲ 매뉴얼 내용 끝 ================================================ */
+
+
+const BASE_TITLE = '무인매장 점주 매뉴얼';
+const ICON_LINK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"></path><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"></path></svg>';
+
+const $view = document.getElementById('view');
+const $q = document.getElementById('q');
+document.getElementById('foot-date').textContent = '정리 기준일 ' + UPDATED;
+
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const md = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+const plain = s => String(s || '').replace(/\*\*/g, '');
+const norm = s => String(s || '').toLowerCase().replace(/\s+/g, '');
+const catLabel = id => (CATEGORIES.find(c => c.id === id) || {}).label || '';
+const byId = id => ITEMS.find(i => i.id === id);
+
+ITEMS.forEach(it => {
+  it._hay = norm([
+    it.title, it.answer, it.keywords, catLabel(it.cat),
+    (it.when || []).join(' '), (it.points || []).join(' '), (it.cautions || []).join(' '),
+    (it.steps || []).map(s => s.text + ' ' + (s.path || []).join(' ')).join(' '),
+    (it.flows || []).map(f => f.title + ' ' + (f.path || []).join(' ') + ' ' + (f.note || '')).join(' ')
+  ].join(' '));
+});
+
+const state = { q: '', cat: 'all' };
+
+function pathHTML(path) {
+  return '<ol class="path">' + path.map((p, i) =>
+    '<li><span' + (i === 0 && KIOSK_MENU.includes(p) ? ' class="key"' : '') + '>' + esc(p) + '</span></li>'
+  ).join('') + '</ol>';
+}
+
+function kioskHTML(on) {
+  const label = on ? '키오스크 예시 화면, ' + on + ' 버튼 위치' : '키오스크 메인 화면 예시';
+  return '<figure class="kiosk" role="img" aria-label="' + esc(label) + '"><div class="k-screen">' +
+    '<div class="k-bar"><span>메인 화면</span><span>로그인 전</span></div><div class="k-grid">' +
+    KIOSK_MENU.map(m => '<div class="k-btn' + (m === on ? ' on' : '') + '">' + esc(m) + '</div>').join('') +
+    '</div></div><figcaption>예시 화면 · 매장마다 실제 화면이 다를 수 있어요</figcaption></figure>';
+}
+
+function rowHTML(it, showTag) {
+  return '<li><a class="row" href="#' + esc(it.id) + '"><span>' +
+    (showTag ? '<span class="row-tag">' + esc(catLabel(it.cat)) + '</span>' : '') +
+    '<span class="row-title">' + esc(it.title) + '</span>' +
+    '<span class="row-peek">' + esc(plain(it.answer)) + '</span></span>' +
+    '<span class="chev" aria-hidden="true">›</span></a></li>';
+}
+
+function contactsHTML(keys) {
+  return '<div class="contacts">' + keys.map(k => {
+    const c = CONTACTS[k];
+    if (!c) return '';
+    const val = c.tel
+      ? '<a class="ct-val" href="tel:' + esc(c.tel) + '">' + esc(c.value) + '</a>'
+      : '<span class="ct-val">' + esc(c.value) + '</span>';
+    return '<div class="ct"><span class="ct-name">' + esc(c.name) + '</span>' + val +
+      (c.note ? '<span class="ct-note">' + esc(c.note) + '</span>' : '') +
+      (c.url ? '<a class="open" href="' + esc(c.url) + '" target="_blank" rel="noopener">' + esc(c.link || '열기') + ' ↗</a>' : '') +
+      '</div>';
+  }).join('') + '</div>';
+}
+
+function tableHTML(t) {
+  return '<div class="tbl"><table>' + (t.caption ? '<caption>' + esc(t.caption) + '</caption>' : '') +
+    '<thead><tr>' + t.head.map(h => '<th scope="col">' + esc(h) + '</th>').join('') + '</tr></thead><tbody>' +
+    t.rows.map(r => '<tr>' + r.map(c => '<td>' + md(c) + '</td>').join('') + '</tr>').join('') +
+    '</tbody></table></div>';
+}
+
+const blk = (title, inner, cls) => '<section class="blk' + (cls ? ' ' + cls : '') + '">' + (title ? '<h2>' + esc(title) + '</h2>' : '') + inner + '</section>';
+
+function chipsHTML() {
+  const all = [{ id: 'all', label: '전체' }].concat(CATEGORIES);
+  return '<div class="chips" role="group" aria-label="분류로 보기">' + all.map(c =>
+    '<button type="button" class="chip" data-cat="' + c.id + '" aria-pressed="' + (state.cat === c.id) + '">' + esc(c.label) + '</button>'
+  ).join('') + '</div>';
+}
+
+function renderHome(missingId) {
+  document.title = BASE_TITLE;
+  const qn = norm(state.q);
+  const filtering = !!qn || state.cat !== 'all';
+  let h = '';
+  if (missingId) h += '<p class="notice">찾는 안내(#' + esc(missingId) + ')가 없어요. 아래 목록에서 골라 주세요.</p>';
+  if (!filtering) h += '<p class="intro">매장에서 자주 생기는 상황과 키오스크 사용법을 모았습니다. 항목을 누르면 단계별 안내가 나오고, 링크를 복사해 바로 보낼 수 있어요.</p>';
+  h += chipsHTML();
+
+  if (filtering) {
+    const list = ITEMS.filter(it => (state.cat === 'all' || it.cat === state.cat) && (!qn || it._hay.includes(qn)));
+    h += '<p class="sec-note" role="status">' + (list.length ? list.length + '개 찾았어요' : '') + '</p>';
+    if (!list.length) {
+      h += '<div class="empty"><p>‘' + esc(state.q) + '’에 맞는 안내가 아직 없어요.</p><p>다른 말로 찾아보거나 고객센터에 문의하세요.</p></div>' + contactsHTML(['kakao', 'ars']);
+    } else {
+      h += '<ul class="rows">' + list.map(it => rowHTML(it, true)).join('') + '</ul>';
+    }
+  } else {
+    const cases = ITEMS.filter(i => i.type === 'case');
+    h += '<h2 class="sec">상황별 대처</h2><p class="sec-note">고객 문의가 오면 여기서 찾으세요 · ' + cases.length + '개</p>';
+    CATEGORIES.forEach(c => {
+      const list = cases.filter(i => i.cat === c.id);
+      if (!list.length) return;
+      h += '<h3 class="group-label">' + esc(c.label) + ' <span>' + list.length + '</span></h3><ul class="rows">' + list.map(i => rowHTML(i, false)).join('') + '</ul>';
+    });
+    const guides = ITEMS.filter(i => i.type === 'guide');
+    h += '<h2 class="sec">키오스크 사용법</h2><p class="sec-note">고객에게 순서를 안내할 때 보세요</p><ul class="rows">' + guides.map(i => rowHTML(i, false)).join('') + '</ul>';
+    const infos = ITEMS.filter(i => i.type === 'info');
+    h += '<h2 class="sec">운영 기본 정보</h2><ul class="rows">' + infos.map(i => rowHTML(i, false)).join('') + '</ul>';
+    h += '<section class="help"><h2>급할 때 연락처</h2>' + contactsHTML(['as', 'ars', 'kakao']) + '</section>';
+  }
+  $view.innerHTML = h;
+}
+
+function renderDetail(it) {
+  document.title = it.title + ' | ' + BASE_TITLE;
+  let h = '<article class="detail"><a class="back" href="#">‹ 전체 목록</a>' +
+    '<p class="eyebrow">' + esc(catLabel(it.cat)) + '</p><h1>' + esc(it.title) + '</h1>' +
+    '<div class="answer"><span class="lbl">' + (it.type === 'case' ? '핵심 답변' : '요약') + '</span><p>' + md(it.answer) + '</p></div>' +
+    '<div class="share"><button type="button" class="btn" data-copy="' + esc(it.id) + '">' + ICON_LINK + '이 안내 링크 복사</button><span class="msg" id="copy-msg" role="status"></span></div>';
+
+  if (it.when && it.when.length) h += blk('이럴 때 해당돼요', '<ul>' + it.when.map(w => '<li>' + md(w) + '</li>').join('') + '</ul>');
+  if (it.figure) h += blk('', kioskHTML(''));
+
+  if (it.steps && it.steps.length) {
+    h += blk(it.type === 'case' ? '이렇게 하세요' : '순서', '<ol class="steps">' + it.steps.map((s, i) =>
+      '<li class="step"><span class="num" aria-hidden="true">' + (i + 1) + '</span><div class="step-body">' +
+      (s.who ? '<span class="who' + (s.who === '점주' ? ' owner' : '') + '">' + esc(s.who) + '</span>' : '') +
+      '<p>' + md(s.text) + '</p>' +
+      (s.path ? pathHTML(s.path) : '') +
+      (s.pending ? '<span class="pending">' + esc(s.pending) + '</span>' : '') +
+      (s.img ? '<figure class="shot"><img src="' + esc(s.img) + '" alt="' + esc(s.alt || plain(s.text)) + '" loading="lazy">' + (s.caption ? '<figcaption>' + esc(s.caption) + '</figcaption>' : '') + '</figure>'
+             : (s.screen ? kioskHTML(s.screen) : '')) +
+      '</div></li>'
+    ).join('') + '</ol>');
+  }
+
+  if (it.flows && it.flows.length) {
+    h += blk('메뉴 순서', it.flows.map(f =>
+      '<div class="flow"><h3>' + esc(f.title) + '</h3>' + pathHTML(f.path) + (f.note ? '<p class="note">' + md(f.note) + '</p>' : '') + '</div>'
+    ).join(''));
+  }
+
+  if (it.points && it.points.length) h += blk(it.pointsTitle || '알아두세요', '<ul>' + it.points.map(p => '<li>' + md(p) + '</li>').join('') + '</ul>');
+  if (it.table) h += blk('', tableHTML(it.table));
+  if (it.cautions && it.cautions.length) h += blk('주의하세요', '<ul>' + it.cautions.map(c => '<li>' + md(c) + '</li>').join('') + '</ul>', 'cautions');
+  if (it.contacts && it.contacts.length) h += blk(it.contactsTitle || '해결이 안 되면', contactsHTML(it.contacts));
+
+  const rel = (it.related || []).map(byId).filter(Boolean);
+  if (rel.length) h += blk('함께 보면 좋은 안내', '<ul class="rows">' + rel.map(r => rowHTML(r, true)).join('') + '</ul>');
+
+  const src = SOURCES[it.source] || SOURCES.kiosk;
+  h += '<p class="meta">근거 자료: <a href="' + esc(src.url) + '" target="_blank" rel="noopener">' + esc(src.label) + ' ↗</a><br>마지막 업데이트 ' + esc(it.updated || UPDATED) + '</p></article>';
+  $view.innerHTML = h;
+}
+
+function route() {
+  let id = '';
+  try { id = decodeURIComponent((location.hash || '').slice(1)); } catch (e) { id = ''; }
+  const it = id ? byId(id) : null;
+  if (it) renderDetail(it); else renderHome(id || null);
+  window.scrollTo(0, 0);
+}
+
+function shareUrl(id) {
+  if (SITE_URL) return SITE_URL.replace(/#.*$/, '') + '#' + id;
+  let framed = true;
+  try { framed = window.top !== window.self; } catch (e) { framed = true; }
+  return framed ? '' : location.href.split('#')[0] + '#' + id;
+}
+
+document.addEventListener('click', e => {
+  const chip = e.target.closest('[data-cat]');
+  if (chip) { state.cat = chip.dataset.cat; renderHome(); return; }
+
+  if (e.target.closest('#home-link')) { state.q = ''; state.cat = 'all'; $q.value = ''; if (!location.hash || location.hash === '#') { e.preventDefault(); renderHome(); window.scrollTo(0, 0); } return; }
+
+  const b = e.target.closest('[data-copy]');
+  if (!b) return;
+  const id = b.dataset.copy;
+  const msg = document.getElementById('copy-msg');
+  const url = shareUrl(id);
+  if (!url) { msg.textContent = '주소창의 링크(끝이 #' + id + ')를 복사해 보내세요.'; return; }
+  const fail = () => { msg.innerHTML = '자동 복사가 막혀 있어요. 이 주소를 길게 눌러 복사하세요: <span class="sel">' + esc(url) + '</span>'; };
+  try {
+    navigator.clipboard.writeText(url).then(() => { msg.textContent = '링크를 복사했어요. 카톡에 붙여 넣어 보내세요.'; }, fail);
+  } catch (err) { fail(); }
+});
+
+$q.addEventListener('input', () => {
+  state.q = $q.value.trim();
+  if (location.hash && location.hash !== '#') location.hash = '';
+  else renderHome();
+});
+
+window.addEventListener('hashchange', route);
+route();
+})();
+</script>
+</body>
+</html>
