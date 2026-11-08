@@ -790,7 +790,7 @@ function renderDetail(it) {
       '<p>' + md(s.text) + '</p>' +
       (s.path ? pathHTML(s.path) : '') +
       (s.pending ? '<span class="pending">' + esc(s.pending) + '</span>' : '') +
-      (s.img ? '<figure class="shot"><img src="' + esc(s.img) + '" alt="' + esc(s.alt || plain(s.text)) + '" loading="lazy">' + (s.caption ? '<figcaption>' + esc(s.caption) + '</figcaption>' : '') + '</figure>'
+      (s.img ? '<figure class="shot"><img src="' + esc(s.img) + '" alt="' + esc(s.alt || plain(s.text)) + '">' + (s.caption ? '<figcaption>' + esc(s.caption) + '</figcaption>' : '') + '</figure>'
              : (s.screen ? kioskHTML(s.screen) : '')) +
       '</div></li>'
     ).join('') + '</ol>');
